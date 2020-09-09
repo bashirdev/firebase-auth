@@ -45,9 +45,19 @@ function App() {
       console.log(err);
     })
   }
-  const handleChange =(event)=>{
+  const handleBlur =(event)=>{
     console.log(event.target.name)
      console.log(event.target.value)
+     if(event.target.name === 'email'){
+       const isEmailValid= /\s+@\s+\.\s+/.test(event.target.value);
+       console.log(isEmailValid);
+     }
+     if(event.target.name === 'password'){
+       const isPasswordValid=event.target.value.length > 8;
+       const isNumberHas=/\d{1}/.test(event.target.value);
+    
+       console.log(isPasswordValid && isNumberHas);
+     }
   }
   const handleSubmit=()=>{
     
@@ -65,9 +75,9 @@ function App() {
 
     <h1>Our own athuentication </h1>
    <form onSubmit={handleSubmit}>
-   <input onChange={handleChange} type='text' name="email"  placeholder="Your email here" required />
+   <input onBlur={handleBlur} type='text' name="email"  placeholder="Your email here" required />
     <br/>
-    <input onChange={handleChange} type="password" name='password' id='' placeholder="Your password here" required/>
+    <input onBlur={handleBlur} type="password" name='password' id='' placeholder="Your password here" required/>
     <br/>
     <input type="submit" value="Submit"/>
    </form>
