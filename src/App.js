@@ -6,6 +6,7 @@ import "firebase/auth";
 import firebaseConfig from './firebase.config';
 firebase.initializeApp(firebaseConfig)
 function App() {
+  const [newUser,setNewuser] =useState(false);
   const [user,setUser] =useState({
     isSignIn:false,
     name:'',
@@ -72,7 +73,7 @@ function App() {
 
   const handleSubmit=(e)=>{
     console.log(user.email, user.password);
-      if(user.email && user.password){
+      if(newUser && user.email && user.password){
         firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
         .then(res=>{
           const newUserInfo={...user};
@@ -91,7 +92,28 @@ function App() {
           // ...
         });
       }
+      if(!newUser && user.email && user.password){
+        firebase.auth().signInWithEmailAndPassword(user.email, user.password)
+        .then(res=>{
+          const newUserInfo={...user};
+          newUserInfo.error='';
+          newUserInfo.success=true;
+          setUser(newUserInfo);
+        })
+        .catch(error=> {
+          // Handle Errors here.
+          const newUserInfo={...user};
+          newUserInfo.error=error.message;
+          newUserInfo.success=false;
+          setUser(newUserInfo);
+          // ...
+        });
+      }
       e.preventDefault();
+  }
+
+  const handleCheckBox=()=>{
+    console.log('checked');
   }
   return (
     <div className="App">
@@ -107,10 +129,10 @@ function App() {
     }
 
     <h1>Our own athuentication </h1>
-  {user.success && <p style={{color:'green'}}>Successfully Added</p>}
-   <p style={{color:'red'}}>{user.error}</p>
+    <input type="checkbox" onChange={()=> setNewuser(!newUser)} name="newUser" id=""/>
+    <label htmlFor="newUser">New user registration</label>
    <form onSubmit={handleSubmit}>
-   <input type='text' onBlur={handleBlur} name='name'  placeholder='your name'/>
+  {newUser &&   <input type='text' onBlur={handleBlur} name='name'  placeholder='your name'/>}
    <br/>
    <input onBlur={handleBlur} type='text' name="email"  placeholder="Your email here" required />
     <br/>
@@ -118,6 +140,8 @@ function App() {
     <br/>
     <input  type="submit" value="Submit"/>
    </form>
+   {user.success && <p style={{color:'green'}}> User {newUser ? 'created' : 'Logedin'} Successfully</p>}
+   <p style={{color:'red'}}>{user.error}</p>
     </div>
   );
 }
