@@ -80,6 +80,7 @@ function App() {
           newUserInfo.error='';
           newUserInfo.success=true;
           setUser(newUserInfo);
+          updateUserInfo(user.name)
         })
         .catch(error => {
           // Handle Errors here.
@@ -87,7 +88,7 @@ function App() {
           newUserInfo.error=error.message;
           newUserInfo.success=false;
           setUser(newUserInfo);
-
+         
         
           // ...
         });
@@ -99,6 +100,7 @@ function App() {
           newUserInfo.error='';
           newUserInfo.success=true;
           setUser(newUserInfo);
+          console.log('sign in user info', res.user);
         })
         .catch(error=> {
           // Handle Errors here.
@@ -112,8 +114,16 @@ function App() {
       e.preventDefault();
   }
 
-  const handleCheckBox=()=>{
-    console.log('checked');
+  const updateUserInfo= name =>{
+    const user = firebase.auth().currentUser;
+   user.updateProfile({
+  displayName: name
+
+}).then(function() {
+  console.log('user name updete successfully');
+}).catch(function(error) {
+  console.log(error);
+});
   }
   return (
     <div className="App">
@@ -138,7 +148,7 @@ function App() {
     <br/>
     <input onBlur={handleBlur} type="password" name='password' id='' placeholder="Your password here" required/>
     <br/>
-    <input  type="submit" value="Submit"/>
+    <input  type="submit" value={newUser ? 'Sign up' : 'Sign in'}/>
    </form>
    {user.success && <p style={{color:'green'}}> User {newUser ? 'created' : 'Logedin'} Successfully</p>}
    <p style={{color:'red'}}>{user.error}</p>
